@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Item Type</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Item Type</h1>
+        {% if message %}<p class="success">{{ message }}</p>{% endif %}
+        <form method="post">
+            <label>Item Type: <input type="text" name="item_type" required></label>
+            <label>Description: <input type="text" name="description"></label>
+            <input type="submit" value="Create Item Type">
+        </form>
+    </div>
+</body>
+</html>

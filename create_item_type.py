@@ -1,0 +1,21 @@
+from flask import Blueprint, render_template, request
+import datetime
+import os
+
+bp_create_item_type = Blueprint('create_item_type', __name__, template_folder='templates')
+ITEMS_LOG = 'data/orders_items.log'
+
+@bp_create_item_type.route('/create_item_type', methods=['GET', 'POST'])
+def create_item_type():
+    msg = ""
+    if request.method == 'POST':
+        entry = {
+            'event': 'create_item_type',
+            'item_type': request.form['item_type'],
+            'description': request.form['description'],
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        }
+        with open(ITEMS_LOG, 'a') as f:
+            f.write(str(entry) + '\n')
+        msg = "Item type created!"
+    return render_template('create_item_type.html', message=msg)

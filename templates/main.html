@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Main Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div>
+            <span>Welcome, {{ user["name"] }} ({{ user["role"] }})</span>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        <h1>Main Menu</h1>
+        <div>
+            <a class="tab" href="{{ url_for('create_user.create_user') }}">Create User</a>
+            <a class="tab" href="{{ url_for('create_location.create_location') }}">Create Location</a>
+            <a class="tab" href="{{ url_for('create_item_type.create_item_type') }}">Create Item Type</a>
+            <a class="tab" href="{{ url_for('create_action.create_action') }}">Create Action</a>
+        </div>
+        <div>
+            <p>Select a tab above to proceed.</p>
+        </div>
+    </div>
+</body>
+</html>
