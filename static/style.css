@@ -107,6 +107,13 @@ input[type="submit"]:hover, button:hover {
     text-decoration: underline;
 }
 
+.tab-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 700px) {
     .container {
         max-width: 98vw;
