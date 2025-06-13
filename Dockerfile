@@ -1,25 +1,14 @@
 # Use official Python image as base
-FROM python:3.11-slim
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+FROM fedora:42
 
 # Create working directory
-WORKDIR /app
+WORKDIR /inventory-manager
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y gcc
-
-# Copy requirements if available
-COPY requirements.txt /app/
-
-# Install Python dependencies
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN dnf install -y python3-flask
 
 # Copy application code
-COPY . /app/
+COPY . /inventory-manager
 
 # Expose Flask port
 EXPOSE 5000

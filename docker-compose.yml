@@ -1,15 +1,12 @@
 version: '3.9'
 
 services:
-  app:
+  inventory-manager:
     build: .
-    container_name: flask_inventory_app
+    container_name: inventory-manager
+    hostname: inventory-manager
     ports:
       - "5000:5000"
     volumes:
-      - ./:/app
-      - ./data:/app/data
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
+      - ./:/inventory-manager
     restart: unless-stopped
