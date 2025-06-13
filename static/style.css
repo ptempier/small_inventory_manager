@@ -85,7 +85,6 @@ input[type="submit"]:hover, button:hover {
     color: #23395d;
     font-weight: 500;
     font-size: 1.07rem;
-    border-bottom: 2px solid #4f8ef7;
     transition: background 0.2s, color 0.2s;
 }
 
@@ -133,6 +132,7 @@ p, .msg {
     margin: 16px 0;
     display: inline-block;
 }
+
 .error {
     color: #d32f2f;
     background: #ffeaea;
