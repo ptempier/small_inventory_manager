@@ -59,7 +59,14 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/locations')
+def locations():
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    locations = list_locations()
+    return render_template('locations.html', user=session.get('user'), locations=locations)
+
+
 if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     app.run(debug=True)
-{% include 'locations_list.html' %}
