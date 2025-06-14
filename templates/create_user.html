@@ -8,11 +8,19 @@
     <div class="container">
         <h1>Create User</h1>
         {% if message %}<p class="success">{{ message }}</p>{% endif %}
-        <form method="post">
+        <form method="post" action="{{ url_for('create_user.create_user') }}">
             <label>Name: <input type="text" name="name" required></label>
             <label>Role: <input type="text" name="role" required></label>
             <label>Password: <input type="text" name="password" required></label>
             <input type="submit" value="Create User">
+        </form>
+        <form method="post" action="{{ url_for('create_item_type.edit_item_type', item_type=item_type.item_type) }}">
+            <label>Item Type: <input type="text" name="item_type" value="{{ item_type.item_type }}"></label><br>
+            <label>Description: <input type="text" name="description" value="{{ item_type.description }}"></label><br>
+            <input type="submit" value="Save">
+        </form>
+        <form method="post" action="{{ url_for('create_location.delete_location', location_id=location.id) }}" style="display:inline;">
+            <button type="submit" onclick="return confirm('Delete this location?');">Delete</button>
         </form>
     </div>
 </body>
