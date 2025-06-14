@@ -67,6 +67,32 @@ def locations():
     return render_template('locations.html', user=session.get('user'), locations=locations)
 
 
+@app.route('/edit_location/<int:location_id>', methods=['GET', 'POST'])
+def edit_location(location_id):
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    location = None
+    if request.method == 'POST':
+        # Here you would handle the form submission for editing a location
+        # For now, let's just redirect to the locations page
+        return redirect(url_for('locations'))
+    else:
+        # Load the location data for the given location_id
+        locations = list_locations()
+        for loc in locations:
+            if loc['id'] == location_id:
+                location = loc
+                break
+    return render_template('edit_location.html', user=session.get('user'), location=location)
+
+
+@app.context_processor
+def utility_processor():
+    def url_for_edit_location(location_id):
+        return url_for('create_location.edit_location', location_id=location_id)
+    return dict(url_for_edit_location=url_for_edit_location)
+
+
 if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     app.run(debug=True)
