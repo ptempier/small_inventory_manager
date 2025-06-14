@@ -31,3 +31,10 @@ def create_location():
             writer.writerow(location)
         msg = "Location created!"
     return render_template('create_location.html', message=msg)
+def list_locations():
+    if not os.path.exists(LOCATION_FILE):
+        return []
+    with open(LOCATION_FILE, 'r') as f:
+        reader = csv.DictReader(f, delimiter='|')
+        locations = [row for row in reader]
+    return locations

@@ -32,3 +32,10 @@ def create_user():
             writer.writerow(user)
         msg = "User created!"
     return render_template('create_user.html', message=msg)
+def list_users():
+    if not os.path.exists(USER_FILE):
+        return []
+    with open(USER_FILE, 'r') as f:
+        reader = csv.DictReader(f, delimiter='|')
+        users = [row for row in reader]
+    return users

@@ -1,25 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Main Menu</title>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div>
-            <span>Welcome, {{ user["name"] }} ({{ user["role"] }})</span>
-            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
-        </div>
-        <h1>Main Menu</h1>
-        <div>
-            <a class="tab" href="{{ url_for('create_user.create_user') }}">Create User</a>
-            <a class="tab" href="{{ url_for('create_location.create_location') }}">Create Location</a>
-            <a class="tab" href="{{ url_for('create_item_type.create_item_type') }}">Create Item Type</a>
-            <a class="tab" href="{{ url_for('create_action.create_action') }}">Create Action</a>
-        </div>
-        <div>
-            <p>Select a tab above to proceed.</p>
-        </div>
-    </div>
+
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Users')">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'ItemTypes')">Item Types</button>
+    <button class="tablinks" onclick="openTab(event, 'Locations')">Locations</button>
+</div>
+
+<div id="Users" class="tabcontent">
+    {% include 'users_list.html' %}
+</div>
+
+<div id="ItemTypes" class="tabcontent">
+    {% include 'item_types_list.html' %}
+</div>
+
+<div id="Locations" class="tabcontent">
+    {% include 'locations_list.html' %}
+</div>
+
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+
 </body>
 </html>
