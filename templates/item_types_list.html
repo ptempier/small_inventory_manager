@@ -7,10 +7,28 @@
 </head>
 <body>
     <h1>Item Types List</h1>
-    <ul>
-        {% for item_type in item_types %}
-        <li>{{ item_type }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Type</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item_type in item_types %}
+            <tr>
+                <td>{{ item_type.item_type }}</td>
+                <td>{{ item_type.description }}</td>
+                <td>
+                    <a href="{{ url_for('create_item_type.edit_item_type', item_type=item_type.item_type) }}">Edit</a>
+                    <form method="post" action="{{ url_for('create_item_type.delete_item_type', item_type=item_type.item_type) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Delete this item type?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

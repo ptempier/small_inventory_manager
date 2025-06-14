@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 import datetime
 import os
+import ast
 
 bp_create_item_type = Blueprint('create_item_type', __name__, template_folder='templates')
 ITEMS_LOG = 'data/orders_items.log'
@@ -19,12 +20,46 @@ def create_item_type():
             f.write(str(entry) + '\n')
         msg = "Item type created!"
     return render_template('create_item_type.html', message=msg)
+
 def list_item_types():
     if not os.path.exists(ITEMS_LOG):
         return []
-    item_types = set()
+    item_types = []
     with open(ITEMS_LOG, 'r') as f:
         for line in f:
-            entry = eval(line)
-            item_types.add(entry['item_type'])
-    return list(item_types)
+            entry = ast.literal_eval(line)
+            if entry.get('event') == 'create_item_type':
+                item_types.append({'item_type': entry['item_type'], 'description': entry.get('description', '')})
+    return item_types
+
+def write_item_types(item_types):
+    # Overwrites the log with only the current item types (for simplicity)
+    with open(ITEMS_LOG, 'w') as f:
+        for item in item_types:
+            entry = {
+                'event': 'create_item_type',
+                'item_type': item['item_type'],
+                'description': item.get('description', ''),
+                'timestamp': datetime.datetime.utcnow().isoformat()
+            }
+            f.write(str(entry) + '\n')
+
+@bp_create_item_type.route('/edit_item_type/<item_type>', methods=['GET', 'POST'])
+def edit_item_type(item_type):
+    item_types = list_item_types()
+    item = next((i for i in item_types if i['item_type'] == item_type), None)
+    if not item:
+        return "Item type not found", 404
+    if request.method == 'POST':
+        item['item_type'] = request.form['item_type']
+        item['description'] = request.form['description']
+        write_item_types(item_types)
+        return redirect(url_for('index'))
+    return render_template('edit_item_type.html', item_type=item)
+
+@bp_create_item_type.route('/delete_item_type/<item_type>', methods=['POST'])
+def delete_item_type(item_type):
+    item_types = list_item_types()
+    item_types = [i for i in item_types if i['item_type'] != item_type]
+    write_item_types(item_types)
+    return redirect(url_for('index'))

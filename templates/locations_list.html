@@ -13,6 +13,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Address</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,12 @@
                 <td>{{ location.id }}</td>
                 <td>{{ location.name }}</td>
                 <td>{{ location.address }}</td>
+                <td>
+                    <a href="{{ url_for('create_location.edit_location', location_id=location.id) }}">Edit</a>
+                    <form method="post" action="{{ url_for('create_location.delete_location', location_id=location.id) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Delete this location?');">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
