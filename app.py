@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session, request
 from create_user import bp_create_user
-from create_location import bp_create_location
+from create_location import bp_create_location, list_locations
 from create_item_type import bp_create_item_type
 from create_action import bp_create_action
 import csv
@@ -34,7 +34,8 @@ def check_credentials(username, password):
 def index():
     if not session.get('user'):
         return redirect(url_for('login'))
-    return render_template('main.html', user=session.get('user'))
+    locations = list_locations()
+    return render_template('main.html', user=session.get('user'), locations=locations)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -61,3 +62,4 @@ def logout():
 if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     app.run(debug=True)
+{% include 'locations_list.html' with context %}

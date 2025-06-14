@@ -65,3 +65,8 @@ def delete_location(location_id):
     locations = [l for l in locations if l['id'] != location_id]
     write_locations(locations)
     return redirect(url_for('index'))
+
+@bp_create_location.route('/locations')
+def locations_list():
+    locations = list_locations()
+    return render_template('locations_list.html', locations=locations)
