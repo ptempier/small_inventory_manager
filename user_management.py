@@ -72,3 +72,14 @@ def delete_user(user_id):
 def users():
     users = list_users()
     return render_template('users.html', users=users)
+
+def read_users():
+    users = []
+    try:
+        with open(USER_FILE, 'r') as f:
+            reader = csv.DictReader(f, delimiter='|')
+            for row in reader:
+                users.append(row)
+    except FileNotFoundError:
+        pass
+    return users
