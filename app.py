@@ -3,8 +3,8 @@ from create_user import bp_create_user
 from create_location import bp_create_location
 from create_item_type import bp_create_item_type
 from create_action import bp_create_action
-import os
 import csv
+import os
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key"  # Change this for production
@@ -45,7 +45,7 @@ def login():
         password = request.form['password']
         user = check_credentials(username, password)
         if user:
-            session['user'] = user
+            session['user'] = {'id': user['id'], 'name': user['name'], 'role': user['role']}
             return redirect(url_for('index'))
         else:
             error = "Invalid credentials"

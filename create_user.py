@@ -67,3 +67,8 @@ def delete_user(user_id):
     users = [u for u in users if u['id'] != user_id]
     write_users(users)
     return redirect(url_for('index'))
+
+@bp_create_user.route('/users')
+def users():
+    users = list_users()
+    return render_template('users.html', users=users)
