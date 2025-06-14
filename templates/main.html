@@ -5,44 +5,52 @@
     <title>Main Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .tab { overflow: hidden; border-bottom: 1px solid #ccc; background: #f1f1f1; }
-        .tab button { background: inherit; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
-        .tab button:hover { background: #ddd; }
-        .tab button.active { background: #ccc; }
-        .tabcontent { display: none; padding: 6px 12px; }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
     </style>
 </head>
 <body>
+
 <div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'ListUsers')">List Users</button>
-    <button class="tablinks" onclick="openTab(event, 'CreateUser')">Create User</button>
-    <button class="tablinks" onclick="openTab(event, 'ListItemTypes')">List Item Types</button>
-    <button class="tablinks" onclick="openTab(event, 'CreateItemType')">Create Item Type</button>
-    <button class="tablinks" onclick="openTab(event, 'ListLocations')">List Locations</button>
-    <button class="tablinks" onclick="openTab(event, 'CreateLocation')">Create Location</button>
-    <button class="tablinks" onclick="openTab(event, 'CreateAction')">Create Action</button>
+    <button class="tablinks" onclick="openTab(event, 'Users')">Users</button>
+    <button class="tablinks" onclick="openTab(event, 'ItemTypes')">Item Types</button>
+    <button class="tablinks" onclick="openTab(event, 'Locations')">Locations</button>
 </div>
 
-<div id="ListUsers" class="tabcontent">
+<div id="Users" class="tabcontent">
     {% include 'users_list.html' %}
 </div>
-<div id="CreateUser" class="tabcontent">
-    {% include 'create_user.html' %}
-</div>
-<div id="ListItemTypes" class="tabcontent">
+
+<div id="ItemTypes" class="tabcontent">
     {% include 'item_types_list.html' %}
 </div>
-<div id="CreateItemType" class="tabcontent">
-    {% include 'create_item_type.html' %}
-</div>
-<div id="ListLocations" class="tabcontent">
+
+<div id="Locations" class="tabcontent">
     {% include 'locations_list.html' %}
-</div>
-<div id="CreateLocation" class="tabcontent">
-    {% include 'create_location.html' %}
-</div>
-<div id="CreateAction" class="tabcontent">
-    {% include 'create_action.html' %}
 </div>
 
 <script>
@@ -59,10 +67,7 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
-// Open the first tab by default
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector(".tablinks").click();
-});
 </script>
+
 </body>
 </html>

@@ -19,7 +19,7 @@ def create_item_type():
         with open(ITEMS_LOG, 'a') as f:
             f.write(str(entry) + '\n')
         msg = "Item type created!"
-    return render_template('create_item_type.html', message=msg)
+    return render_template('item_type_create.html', message=msg)
 
 def list_item_types():
     if not os.path.exists(ITEMS_LOG):

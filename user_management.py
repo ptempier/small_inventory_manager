@@ -31,7 +31,7 @@ def create_user():
                 writer.writeheader()
             writer.writerow(user)
         msg = "User created!"
-    return render_template('create_user.html', message=msg)
+    return render_template('user_create.html', message=msg)
 
 def list_users():
     if not os.path.exists(USER_FILE):

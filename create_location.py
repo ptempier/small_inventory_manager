@@ -30,7 +30,7 @@ def create_location():
                 writer.writeheader()
             writer.writerow(location)
         msg = "Location created!"
-    return render_template('create_location.html', message=msg)
+    return render_template('location_create.html', message=msg)
 
 def list_locations():
     if not os.path.exists(LOCATION_FILE):
@@ -69,4 +69,4 @@ def delete_location(location_id):
 @bp_create_location.route('/locations')
 def locations_list():
     locations = list_locations()
-    return render_template('locations_list.html', locations=locations)
+    return render_template('location_list.html', locations=locations)
