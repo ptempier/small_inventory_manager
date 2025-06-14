@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   inventory-manager:
-    build: .
+    image: inventory-manager:1
     container_name: inventory-manager
     hostname: inventory-manager
     ports:
