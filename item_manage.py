@@ -21,29 +21,6 @@ def create_item_type():
         msg = "Item type created!"
     return render_template('item_type_create.html', message=msg)
 
-def list_item_types():
-    if not os.path.exists(ITEMS_LOG):
-        return []
-    item_types = []
-    with open(ITEMS_LOG, 'r') as f:
-        for line in f:
-            entry = ast.literal_eval(line)
-            if entry.get('event') == 'create_item_type':
-                item_types.append({'item_type': entry['item_type'], 'description': entry.get('description', '')})
-    return item_types
-
-def write_item_types(item_types):
-    # Overwrites the log with only the current item types (for simplicity)
-    with open(ITEMS_LOG, 'w') as f:
-        for item in item_types:
-            entry = {
-                'event': 'create_item_type',
-                'item_type': item['item_type'],
-                'description': item.get('description', ''),
-                'timestamp': datetime.datetime.utcnow().isoformat()
-            }
-            f.write(str(entry) + '\n')
-
 @bp_create_item_type.route('/edit_item_type/<item_type>', methods=['GET', 'POST'])
 def edit_item_type(item_type):
     item_types = list_item_types()

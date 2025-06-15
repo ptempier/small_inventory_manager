@@ -6,14 +6,6 @@ bp_create_user = Blueprint('create_user', __name__, template_folder='templates')
 USER_FILE = 'data/users.csv'
 USER_FIELDS = ['id', 'name', 'role', 'password']
 
-def next_user_id():
-    if not os.path.exists(USER_FILE):
-        return 1
-    with open(USER_FILE, 'r') as f:
-        reader = csv.DictReader(f, delimiter='|')
-        ids = [int(row['id']) for row in reader]
-        return max(ids, default=0) + 1
-
 @bp_create_user.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     msg = ""
@@ -32,20 +24,6 @@ def create_user():
             writer.writerow(user)
         msg = "User created!"
     return render_template('user_create.html', message=msg)
-
-def list_users():
-    if not os.path.exists(USER_FILE):
-        return []
-    with open(USER_FILE, 'r') as f:
-        reader = csv.DictReader(f, delimiter='|')
-        users = [row for row in reader if row.get('id')]
-    return users
-
-def write_users(users):
-    with open(USER_FILE, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=USER_FIELDS, delimiter='|')
-        writer.writeheader()
-        writer.writerows(users)
 
 @bp_create_user.route('/edit_user/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):

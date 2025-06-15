@@ -6,14 +6,6 @@ bp_create_location = Blueprint('create_location', __name__, template_folder='tem
 LOCATION_FILE = 'data/locations.csv'
 LOCATION_FIELDS = ['id', 'name', 'address']
 
-def next_location_id():
-    if not os.path.exists(LOCATION_FILE):
-        return 1
-    with open(LOCATION_FILE, 'r') as f:
-        reader = csv.DictReader(f, delimiter='|')
-        ids = [int(row['id']) for row in reader]
-        return max(ids, default=0) + 1
-
 @bp_create_location.route('/create_location', methods=['GET', 'POST'])
 def create_location():
     msg = ""
@@ -31,20 +23,6 @@ def create_location():
             writer.writerow(location)
         msg = "Location created!"
     return render_template('location_create.html', message=msg)
-
-def list_locations():
-    if not os.path.exists(LOCATION_FILE):
-        return []
-    with open(LOCATION_FILE, 'r') as f:
-        reader = csv.DictReader(f, delimiter='|')
-        locations = [row for row in reader]
-    return locations
-
-def write_locations(locations):
-    with open(LOCATION_FILE, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=LOCATION_FIELDS, delimiter='|')
-        writer.writeheader()
-        writer.writerows(locations)
 
 @bp_create_location.route('/edit_location/<location_id>', methods=['GET', 'POST'])
 def edit_location(location_id):
