@@ -1,98 +1,168 @@
-from flask import Flask, render_template, redirect, url_for, session, request
-from create_user import bp_create_user
-from create_location import bp_create_location, list_locations
-from create_item_type import bp_create_item_type
-from create_action import bp_create_action
-import csv
+#!/usr/bin/env python3
+
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import os
+from auth_utils import authenticate_user, require_login
+from users_utils import get_users, add_user, edit_user, delete_user
+from locations_utils import get_locations, add_location, edit_location, delete_location
+from items_utils import get_items, add_item, edit_item, delete_item
+from actions_utils import get_actions, add_action, edit_action, delete_action
+from operations_utils import get_operations, add_operation
 
 app = Flask(__name__)
-app.secret_key = "super-secret-key"  # Change this for production
+app.secret_key = 'your-secret-key-change-this-in-production'
 
-# Register blueprints
-app.register_blueprint(bp_create_user)
-app.register_blueprint(bp_create_location)
-app.register_blueprint(bp_create_item_type)
-app.register_blueprint(bp_create_action)
-
-USER_FILE = 'data/users.csv'
-USER_FIELDS = ['id', 'name', 'role', 'password']
-
-
-def check_credentials(username, password):
-    if not os.path.exists(USER_FILE):
-        return False
-    with open(USER_FILE, 'r') as f:
-        reader = csv.DictReader(f, delimiter='|')
-        for row in reader:
-            if row['name'] == username and row['password'] == password:
-                return row  # return user dict
-    return False
-
+# Initialize data directory
+if not os.path.exists('data'):
+    os.makedirs('data')
 
 @app.route('/')
 def index():
-    if not session.get('user'):
+    if 'user' not in session:
         return redirect(url_for('login'))
-    locations = list_locations()
-    return render_template('main.html', user=session.get('user'), locations=locations)
-
+    return render_template('main.html', 
+                         users=get_users(), 
+                         locations=get_locations(), 
+                         items=get_items(), 
+                         actions=get_actions(),
+                         operations=get_operations())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = ""
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = check_credentials(username, password)
-        if user:
-            session['user'] = {'id': user['id'], 'name': user['name'], 'role': user['role']}
+        if authenticate_user(username, password):
+            session['user'] = username
             return redirect(url_for('index'))
         else:
-            error = "Invalid credentials"
-    return render_template('login.html', error=error)
-
+            flash('Invalid credentials')
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.clear()
+    session.pop('user', None)
     return redirect(url_for('login'))
 
+# User management routes
+@app.route('/add_user', methods=['POST'])
+@require_login
+def add_user_route():
+    login = request.form['login']
+    password = request.form['password']
+    group = request.form['group']
+    add_user(login, password, group)
+    flash('User added successfully')
+    return redirect(url_for('index'))
 
-@app.route('/locations')
-def locations():
-    if not session.get('user'):
-        return redirect(url_for('login'))
-    locations = list_locations()
-    return render_template('locations.html', user=session.get('user'), locations=locations)
+@app.route('/edit_user/<int:user_id>', methods=['POST'])
+@require_login
+def edit_user_route(user_id):
+    login = request.form['login']
+    password = request.form['password']
+    group = request.form['group']
+    edit_user(user_id, login, password, group)
+    flash('User updated successfully')
+    return redirect(url_for('index'))
 
+@app.route('/delete_user/<int:user_id>')
+@require_login
+def delete_user_route(user_id):
+    delete_user(user_id)
+    flash('User deleted successfully')
+    return redirect(url_for('index'))
 
-@app.route('/edit_location/<int:location_id>', methods=['GET', 'POST'])
-def edit_location(location_id):
-    if not session.get('user'):
-        return redirect(url_for('login'))
-    location = None
-    if request.method == 'POST':
-        # Here you would handle the form submission for editing a location
-        # For now, let's just redirect to the locations page
-        return redirect(url_for('locations'))
-    else:
-        # Load the location data for the given location_id
-        locations = list_locations()
-        for loc in locations:
-            if loc['id'] == location_id:
-                location = loc
-                break
-    return render_template('edit_location.html', user=session.get('user'), location=location)
+# Location management routes
+@app.route('/add_location', methods=['POST'])
+@require_login
+def add_location_route():
+    name = request.form['name']
+    address = request.form['address']
+    add_location(name, address)
+    flash('Location added successfully')
+    return redirect(url_for('index'))
 
+@app.route('/edit_location/<int:location_id>', methods=['POST'])
+@require_login
+def edit_location_route(location_id):
+    name = request.form['name']
+    address = request.form['address']
+    edit_location(location_id, name, address)
+    flash('Location updated successfully')
+    return redirect(url_for('index'))
 
-@app.context_processor
-def utility_processor():
-    def url_for_edit_location(location_id):
-        return url_for('create_location.edit_location', location_id=location_id)
-    return dict(url_for_edit_location=url_for_edit_location)
+@app.route('/delete_location/<int:location_id>')
+@require_login
+def delete_location_route(location_id):
+    delete_location(location_id)
+    flash('Location deleted successfully')
+    return redirect(url_for('index'))
 
+# Item management routes
+@app.route('/add_item', methods=['POST'])
+@require_login
+def add_item_route():
+    location = request.form['location']
+    name = request.form['name']
+    comment = request.form['comment']
+    add_item(location, name, comment)
+    flash('Item added successfully')
+    return redirect(url_for('index'))
+
+@app.route('/edit_item/<int:item_id>', methods=['POST'])
+@require_login
+def edit_item_route(item_id):
+    location = request.form['location']
+    name = request.form['name']
+    comment = request.form['comment']
+    edit_item(item_id, location, name, comment)
+    flash('Item updated successfully')
+    return redirect(url_for('index'))
+
+@app.route('/delete_item/<int:item_id>')
+@require_login
+def delete_item_route(item_id):
+    delete_item(item_id)
+    flash('Item deleted successfully')
+    return redirect(url_for('index'))
+
+# Action management routes
+@app.route('/add_action', methods=['POST'])
+@require_login
+def add_action_route():
+    name = request.form['name']
+    comment = request.form['comment']
+    add_action(name, comment)
+    flash('Action added successfully')
+    return redirect(url_for('index'))
+
+@app.route('/edit_action/<int:action_id>', methods=['POST'])
+@require_login
+def edit_action_route(action_id):
+    name = request.form['name']
+    comment = request.form['comment']
+    edit_action(action_id, name, comment)
+    flash('Action updated successfully')
+    return redirect(url_for('index'))
+
+@app.route('/delete_action/<int:action_id>')
+@require_login
+def delete_action_route(action_id):
+    delete_action(action_id)
+    flash('Action deleted successfully')
+    return redirect(url_for('index'))
+
+# Operation management routes
+@app.route('/add_operation', methods=['POST'])
+@require_login
+def add_operation_route():
+    comment = request.form['comment']
+    action = request.form['action']
+    user = session['user']
+    location = request.form['location']
+    add_operation(comment, action, user, location)
+    flash('Operation added successfully')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    os.makedirs('data', exist_ok=True)
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
